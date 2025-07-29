@@ -5,10 +5,11 @@ const postSchema = new mongoose.Schema({
   slug:    { type: String, required: true, unique: true },
   content: { type: String, required: true },
   tags:    [String],
+  imageUrl: { type: String, default: "" },   // NEW FIELD
   status:  { type: String, enum: ['draft', 'published'], default: 'published' }
 }, { timestamps: true });
 
-// Text index for search (title + content)
+// Text search
 postSchema.index({ title: 'text', content: 'text' });
 
 module.exports = mongoose.model('Post', postSchema);

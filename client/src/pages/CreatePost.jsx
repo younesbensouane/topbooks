@@ -6,6 +6,8 @@ import api from '../api';
 
 export default function CreatePost() {
   const navigate = useNavigate();
+
+  // --- form state ---
   const [title, setTitle] = useState('');
   const [content, setContent] = useState(`# Welcome to TopBooks
 
@@ -14,6 +16,8 @@ Write your **book note** or **review** here.
 - Live preview on the right`);
   const [tags, setTags] = useState('self-help, productivity');
   const [status, setStatus] = useState('published');
+  const [imageUrl, setImageUrl] = useState(''); // NEW: image url field
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
@@ -22,7 +26,16 @@ Write your **book note** or **review** here.
     setSaving(true);
     setError(null);
     try {
-      const res = await api.post('/posts', { title, content, tags, status });
+      // ⬇️ THIS is where the POST with imageUrl goes
+      const res = await api.post('/posts', {
+        title,
+        content,
+        tags,      // can be comma string; backend splits
+        status,
+        imageUrl,  // NEW
+      });
+
+      // go to the new post by slug
       navigate(`/post/${res.data.slug}`);
     } catch (err) {
       setError(err.response?.data?.error || err.message);
@@ -44,11 +57,19 @@ Write your **book note** or **review** here.
         <div>
           <label className="block text-sm font-medium">Title</label>
           <input
-            className="w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
+            className="input-base w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
             placeholder="e.g., The 7 Habits of Highly Effective People"
             value={title}
             onChange={e => setTitle(e.target.value)}
             required
+          />
+
+          <label className="block text-sm font-medium mt-4">Image URL</label>
+          <input
+            className="input-base w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
+            placeholder="https://example.com/cover.jpg"
+            value={imageUrl}
+            onChange={e => setImageUrl(e.target.value)}
           />
 
           <label className="block text-sm font-medium mt-4">Content (Markdown)</label>

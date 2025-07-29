@@ -2,26 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Quick sanity check styles */
-body { @apply bg-white text-gray-900; }
+@layer base {
+  html, body, #root { height: 100%; }
 
-html, body, #root { height: 100%; }
-body {
-  @apply bg-white text-gray-900;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-}
-h1,h2,h3,h4 { @apply text-gray-900; }
-a { @apply text-brand-600 hover:text-brand-700; }
+  /* Light / Dark body text & background */
+  body {
+    @apply bg-white text-gray-900;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  .dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
 
-@layer components {
-  .card { @apply bg-white border rounded-2xl shadow-soft p-5 transition hover:shadow-lg; }
-  .btn  { @apply inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium; }
-  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 border-brand-600; }
-  .btn-ghost   { @apply hover:bg-gray-50 border-gray-200; }
+  a { @apply text-brand-600 hover:text-brand-700; }
+  .dark a { @apply text-brand-300 hover:text-brand-200; }
 }
 
-@layer components {
-  .prose { @apply prose-headings:font-semibold prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline; }
-}
+/* Shared components */
+.card { @apply bg-white border rounded-2xl shadow-soft p-5 transition hover:shadow-lg; }
+.dark .card { @apply bg-gray-900 border-gray-800 hover:shadow; }
 
+.btn  { @apply inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium; }
+.btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 border-brand-600; }
+.btn-ghost   { @apply hover:bg-gray-50 border-gray-200; }
+.dark .btn-ghost { @apply border-gray-700 hover:bg-gray-800; }
 
+/* Inputs (forms plugin helps, we add dark tweaks) */
+.input-base { @apply w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600; }
+.dark .input-base { @apply bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-400; }
+
+/* Markdown typography */
+.prose { @apply prose-headings:font-semibold prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline; }
+.dark .prose { @apply prose-invert; }

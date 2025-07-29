@@ -33,6 +33,7 @@ router.get('/seed', async (req, res) => {
         slug: "the-alchemist",
         content: "A spiritual journey of self-discovery by Paulo Coelho.",
         tags: ["fiction", "inspiration"],
+        imageUrl: "https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg",
         status: "published",
       },
       {
@@ -40,6 +41,7 @@ router.get('/seed', async (req, res) => {
         slug: "atomic-habits",
         content: "Tiny changes, remarkable results — a system for building good habits and breaking bad ones.",
         tags: ["self-help", "productivity"],
+        imageUrl: "https://m.media-amazon.com/images/I/81bGKUa1e0L.jpg",
         status: "published",
       },
       {
@@ -47,6 +49,7 @@ router.get('/seed', async (req, res) => {
         slug: "deep-work",
         content: "Rules for focused success in a distracted world.",
         tags: ["self-help", "focus"],
+        imageUrl: "https://m.media-amazon.com/images/I/71g2ednj0JL.jpg",
         status: "published",
       },
     ];
@@ -64,7 +67,7 @@ router.get('/seed', async (req, res) => {
 // Create (auto slug, basic validation)
 router.post('/', async (req, res) => {
   try {
-    let { title, content, tags, status } = req.body;
+    let { title, content, tags, status, imageUrl } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({ error: 'title and content are required' });
@@ -77,13 +80,23 @@ router.post('/', async (req, res) => {
     if (!Array.isArray(tags)) tags = [];
 
     const slug = await generateUniqueSlug(title);
-    const post = new Post({ title, slug, content, tags, status: status || 'published' });
+
+    const post = new Post({
+      title,
+      slug,
+      content,
+      tags,
+      imageUrl: imageUrl || "",
+      status: status || 'published',
+    });
+
     await post.save();
     return res.status(201).json(post);
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
 });
+
 
 // READ: distinct tags (for filter UI)
 router.get('/tags', async (req, res) => {

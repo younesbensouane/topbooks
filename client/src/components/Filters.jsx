@@ -35,7 +35,7 @@ export default function Filters({ search, setSearch, selectedTags, setSelectedTa
         <div>
           <label className="block text-sm font-medium text-gray-700">Search</label>
           <input
-            className="mt-1 w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600"
+            className="input-base mt-1 w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600"
             placeholder="Search by title or content…"
             value={search}
             onChange={e => setSearch(e.target.value)}
