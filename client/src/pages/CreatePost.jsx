@@ -74,7 +74,7 @@ Write your **book note** or **review** here.
 
           <label className="block text-sm font-medium mt-4">Content (Markdown)</label>
           <textarea
-            className="w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1 h-72"
+            className="input-base w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1 h-72"
             value={content}
             onChange={e => setContent(e.target.value)}
             required
@@ -84,7 +84,7 @@ Write your **book note** or **review** here.
             <div>
               <label className="block text-sm font-medium">Tags (comma separated)</label>
               <input
-                className="w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
+                className="input-base w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
                 placeholder="self-help, productivity"
                 value={tags}
                 onChange={e => setTags(e.target.value)}
@@ -94,7 +94,7 @@ Write your **book note** or **review** here.
             <div>
               <label className="block text-sm font-medium">Status</label>
               <select
-                className="w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
+                className="input-base w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600 mt-1"
                 value={status}
                 onChange={e => setStatus(e.target.value)}
               >
@@ -115,7 +115,7 @@ Write your **book note** or **review** here.
 
         <div>
           <div className="text-sm font-medium mb-2">Live Preview</div>
-          <div className="card prose max-w-none">
+          <div className="card prose max-w-none dark:bg-gray-900 dark:border-gray-800">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {content}
             </ReactMarkdown>

@@ -27,9 +27,20 @@
 .btn-ghost   { @apply hover:bg-gray-50 border-gray-200; }
 .dark .btn-ghost { @apply border-gray-700 hover:bg-gray-800; }
 
-/* Inputs (forms plugin helps, we add dark tweaks) */
-.input-base { @apply w-full rounded-md border-gray-300 focus:border-brand-600 focus:ring-brand-600; }
-.dark .input-base { @apply bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-400; }
+/* Inputs (light + dark) */
+.input-base {
+  @apply w-full rounded-md border bg-white border-gray-300 text-gray-900 placeholder-gray-500
+         focus:border-brand-600 focus:ring-brand-600;
+}
+.dark .input-base {
+  @apply bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-400;
+}
+
+/* Buttons (unchanged, for reference) */
+.btn  { @apply inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium; }
+.btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 border-brand-600; }
+.btn-ghost   { @apply hover:bg-gray-50 border-gray-200; }
+.dark .btn-ghost { @apply border-gray-700 hover:bg-gray-800; }
 
 /* Markdown typography */
 .prose { @apply prose-headings:font-semibold prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline; }
