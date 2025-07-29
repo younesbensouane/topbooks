@@ -1,0 +1,28 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Vite & builds
+dist/
+client/dist/
+server/dist/
+client/.vite/
+.DS_Store
+
+# Env & local config
+.env
+.env.*
+!*.env.example
+server/.env
+client/.env
+server/.env.*
+client/.env.*
+!server/.env.example
+!client/.env.example
+
+# Editor/OS
+.vscode/
+.idea/
+*.log
