@@ -25,24 +25,31 @@ export default function BookDetail() {
 
   return (
     <div className="container py-8">
-      <Link to="/" className="text-sm underline">← Back</Link>
+      <div className="flex items-center justify-between mb-3">
+        <Link to="/" className="text-sm underline">← Back</Link>
+        <Link to={`/post/${book.slug}/edit`} className="btn btn-ghost">Edit</Link>
+      </div>
+
       {book.imageUrl && (
-  <div className="mx-auto my-4 max-w-sm">
-    <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <img src={book.imageUrl} alt={book.title} className="absolute inset-0 w-full h-full object-cover" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-2 bg-black/10 mix-blend-multiply opacity-20" />
-    </div>
-  </div>
-)}
+        <div className="mx-auto my-4 max-w-sm">
+          <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <img src={book.imageUrl} alt={book.title} className="absolute inset-0 w-full h-full object-cover" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-2 bg-black/10 mix-blend-multiply opacity-20" />
+          </div>
+        </div>
+      )}
+
       <h1 className="text-3xl font-bold mt-3">{book.title}</h1>
-      <div className="mt-6 prose prose-gray max-w-none">
+
+      <div className="mt-6 prose max-w-none">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {book.content}
         </ReactMarkdown>
       </div>
+
       <div className="mt-6 flex flex-wrap gap-2">
         {(book.tags || []).map(tag => (
-          <span key={tag} className="text-xs px-2 py-1 rounded-full border bg-gray-50 text-gray-700">
+          <span key={tag} className="text-xs px-2 py-1 rounded-full border bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
             {tag}
           </span>
         ))}
