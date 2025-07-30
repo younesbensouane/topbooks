@@ -22,6 +22,22 @@ async function generateUniqueSlug(title) {
   }
   return slug;
 }
+
+// Normalize tags: accepts array or "a, b, c" and returns ["a","b","c"]
+function normalizeTags(input) {
+  if (!input) return [];
+  if (Array.isArray(input)) {
+    return input
+      .flatMap(t => (typeof t === 'string' ? t.split(',') : []))
+      .map(t => t.trim())
+      .filter(Boolean);
+  }
+  if (typeof input === 'string') {
+    return input.split(',').map(t => t.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 // --------------------------------
 
 // --- DEV ONLY: seed sample posts once ---
@@ -64,24 +80,20 @@ router.get('/seed', async (req, res) => {
   }
 });
 
-// Create (auto slug, basic validation)
+// --------------------------------
+// CREATE (now normalizes tags and auto-creates unique slug)
 router.post('/', async (req, res) => {
   try {
-    let { title, content, tags, status, imageUrl } = req.body;
+    const { title, content, imageUrl, status } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({ error: 'title and content are required' });
     }
 
-    // tags may be a comma string
-    if (typeof tags === 'string') {
-      tags = tags.split(',').map(t => t.trim()).filter(Boolean);
-    }
-    if (!Array.isArray(tags)) tags = [];
-
+    const tags = normalizeTags(req.body.tags);
     const slug = await generateUniqueSlug(title);
 
-    const post = new Post({
+    const post = await Post.create({
       title,
       slug,
       content,
@@ -90,19 +102,16 @@ router.post('/', async (req, res) => {
       status: status || 'published',
     });
 
-    await post.save();
     return res.status(201).json(post);
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
 });
 
-
 // READ: distinct tags (for filter UI)
 router.get('/tags', async (req, res) => {
   try {
     const tags = await Post.distinct('tags', { status: 'published' });
-    // sort A-Z, remove empty
     const clean = tags.filter(Boolean).sort((a, b) => a.localeCompare(b));
     res.json(clean);
   } catch (err) {
@@ -111,7 +120,6 @@ router.get('/tags', async (req, res) => {
 });
 
 // READ: list with search + tags + pagination
-// Query params: status, search, tags, page, limit
 // Example: /api/posts?status=published&search=habit&tags=self-help,productivity&page=1&limit=9
 router.get('/', async (req, res) => {
   try {
@@ -130,23 +138,22 @@ router.get('/', async (req, res) => {
     if (status) filter.status = status;
 
     // tags filter
-    let tagsArr = [];
     if (typeof tags === 'string' && tags.trim().length > 0) {
-      tagsArr = tags.split(',').map(t => t.trim()).filter(Boolean);
-      if (tagsArr.length > 0) {
-        filter.tags = { $in: tagsArr };
-      }
+      const tagsArr = tags.split(',').map(t => t.trim()).filter(Boolean);
+      if (tagsArr.length > 0) filter.tags = { $in: tagsArr };
     }
 
     // search filter (uses text index if search provided)
     let sort = { createdAt: -1 };
+    let projection = {};
     if (search && search.trim().length > 0) {
       filter.$text = { $search: search.trim() };
-      sort = { score: { $meta: 'textScore' } }; // rank by text score
+      projection = { score: { $meta: 'textScore' } };
+      sort = { score: { $meta: 'textScore' } };
     }
 
     const total = await Post.countDocuments(filter);
-    const posts = await Post.find(filter, search ? { score: { $meta: 'textScore' } } : {})
+    const posts = await Post.find(filter, projection)
       .sort(sort)
       .skip((pageNum - 1) * limitNum)
       .limit(limitNum);
@@ -174,12 +181,18 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
-// UPDATE
+// UPDATE (now normalizes tags when provided, and re-slugs on title change)
 router.put('/:id', async (req, res) => {
   try {
-    const { title } = req.body;
     const update = { ...req.body };
-    if (title) update.slug = await generateUniqueSlug(title);
+
+    if (update.tags !== undefined) {
+      update.tags = normalizeTags(update.tags);
+    }
+    if (update.title) {
+      update.slug = await generateUniqueSlug(update.title);
+    }
+
     const post = await Post.findByIdAndUpdate(req.params.id, update, { new: true });
     res.json(post);
   } catch (err) {
@@ -196,5 +209,8 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
 
 module.exports = router;
